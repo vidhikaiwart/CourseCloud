@@ -7,8 +7,10 @@ import axios from 'axios';
 import { serverUrl } from '../App.jsx';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
-// import { useDispatch } from 'react-redux';
-// import { setUserData } from '../../redux/userSlice.js'; 
+import { useDispatch } from 'react-redux';
+ 
+import { setUserData } from "../redux/userSlice.js";
+
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +21,7 @@ const SignUp = () => {
   const [password,setPassword] = useState("");
   const [role,setRole] = useState("Student");
   const [loading,setLoading] = useState(false);
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
 const handleSignUp = async () => {
     setLoading(true);
@@ -27,7 +29,7 @@ const handleSignUp = async () => {
   const result = await axios.post(`${serverUrl}/api/auth/signup`, 
     { name, email,password,role},
     { withCredentials: true })
-    // dispatch(setUserData(result.data));
+    dispatch(setUserData(result.data));
     console.log(result.data);
 
      setLoading(false);
