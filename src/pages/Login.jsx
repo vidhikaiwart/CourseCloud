@@ -4,13 +4,13 @@ import google from '../assets/google.jpg';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { set } from 'mongoose';
 import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import { serverUrl } from '../App.jsx';
 import { toast } from 'react-toastify';
-// import { useDispatch } from 'react-redux';
-// import { setUserData } from '../../redux/userSlice.js';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice.js';
+
 
 const Login = () => {
   
@@ -18,7 +18,7 @@ const Login = () => {
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [loading,setLoading] = useState(false);
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ const Login = () => {
         try{
             const result = await axios.post(`${serverUrl}/api/auth/login`,
              {email,password}, {withCredentials: true})
-            //  dispatch(setUserData(result.data));
+             dispatch(setUserData(result.data));
             console.log(result.data);
              setLoading(false)
              toast.success("Login successful");
@@ -83,8 +83,9 @@ const Login = () => {
              {loading ? <ClipLoader size={30} color='white'/>:"Login"}
             </button>
 
-            <span className='text-[13px] cursor-pointer text-[#585757'>Forget your password?</span>
-  
+            <span className='text-[13px] cursor-pointer text-[#585757]' 
+            onClick = {()=>navigate("/forget")}>Forget your password?</span>
+
             {/* Divider */}
             <div className="flex items-center gap-2 w-full">
               <div className="flex-1 h-[1px] bg-gray-300"></div>
