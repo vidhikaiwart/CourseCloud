@@ -5,8 +5,10 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice.js';
 
+
 const useCurrentUser = () => {
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     const fetchUser = async () => {
