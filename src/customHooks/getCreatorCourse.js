@@ -6,15 +6,19 @@ import { useDispatch , useSelector} from 'react-redux'
 import { setCreatorCourseData } from '../redux/courseSlice.js'
 
 
-const getCreatorCourses = () => {
+const useCreatorCourses = () => {
     const dispatch = useDispatch();
     const {userData} = useSelector((state) => state.user);
-  return (
+
     useEffect(() => {
 
-  const creatorCourses = async () => {
+  const creatorCourse = async () => {
     try {
-      const response = await axios.get(serverUrl + "/api/course/getcreator",
+      const userId = userData._id;
+      console.log("Fetching courses for creator:", userId);
+         const courses = await Course.find({ creator: userId });
+      const response = await axios.get(
+          `${serverUrl}/api/course/getcreator`,
          { withCredentials: true });
         console.log("Creator Course Data:", response.data);
         dispatch(setCreatorCourseData(response.data));
@@ -24,9 +28,9 @@ const getCreatorCourses = () => {
     }
   };
 
-  creatorCourses();
+  creatorCourse();
     },[userData])
-  )
+  
 }
 
-export default getCreatorCourses
+export default useCreatorCourses

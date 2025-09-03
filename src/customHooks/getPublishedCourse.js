@@ -5,12 +5,13 @@ import { serverUrl } from '../App'
 import { useDispatch } from 'react-redux'
 import { setCourseData } from '../redux/courseSlice.js'
 
-const getPublishedCourses = () => {
+const usePublishedCourses = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const getCourseData = async () => {
         try{
-          const response = await axios.get(`${serverUrl}/api/courses/getpublished`, { withCredentials: true });
+          const response = await axios.get(`${serverUrl}/api/course/getpublished`,
+             { withCredentials: true });
           dispatch(setCourseData(response.data));
           console.log(response.data)
         } catch (error) {
@@ -22,4 +23,4 @@ const getPublishedCourses = () => {
 
 }
 
-export default getPublishedCourses;
+export default usePublishedCourses;
