@@ -19,10 +19,7 @@ const CreateCourse = () => {
     // e.preventDefault();
     setLoading(true);
     try{
-      const result = await axios.post(serverUrl + "/api/course/create", {
-        title,
-        category,
-      }, { withCredentials: true });
+      const result = await axios.post(serverUrl + "/api/course/create", { title, category }, { withCredentials: true });
       navigate("/courses");
          setLoading(false);
       console.log( result.data);
@@ -93,7 +90,7 @@ const CreateCourse = () => {
           <button
             type="submit"
             className="w-full bg-black disabled:{loading} text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
-            onClick={handleCreateCourse}
+            onClick={handleCreateCourse }
           >
             {loading? <ClipLoader size={20} color={"#fff"} /> : "Create"}
           </button>
