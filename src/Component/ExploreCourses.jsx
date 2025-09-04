@@ -7,8 +7,9 @@ import { AiFillOpenAI } from "react-icons/ai";
 import { SiGoogledataproc } from "react-icons/si";
 import { BsClipboardData } from "react-icons/bs";
 import { SiOpenaigym } from "react-icons/si";
-
+import { useNavigate } from "react-router-dom";
 const ExploreCourses = () => {
+    const navigate = useNavigate();
   // Course data array (so you don’t repeat code)
   const courses = [
     { icon: <TbDeviceImacCode />, title: "Web Development", bg: "bg-green-100" },
@@ -33,7 +34,8 @@ const ExploreCourses = () => {
           <p className="text-gray-500 mb-6">
            learn new skills online with top educators. Choose from 1000+ courses in web development, AI, data science, and more.
           </p>
-          <button className="bg-black text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition">
+          <button className="bg-black text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition"
+          onClick={() => navigate("/allcourses")}>
             Explore Courses <span>➔</span>
           </button>
         </div>
