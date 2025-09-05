@@ -9,6 +9,7 @@ import { use } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { FaEdit } from "react-icons/fa";
 import { setCreatorCourseData } from "../../redux/courseSlice";
 
 const Courses = () => {

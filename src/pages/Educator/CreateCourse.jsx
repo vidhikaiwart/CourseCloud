@@ -15,11 +15,16 @@ const CreateCourse = () => {
 
  
 
-  const handleCreateCourse = async () => {
-    // e.preventDefault();
+  const handleCreateCourse = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try{
       const result = await axios.post(serverUrl + "/api/course/create", { title, category }, { withCredentials: true });
+      if(result.status === 201){
+      toast.success("Course created successfully!");
+      navigate("/courses");
+}
+      
       navigate("/courses");
          setLoading(false);
       console.log( result.data);

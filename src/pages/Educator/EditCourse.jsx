@@ -5,6 +5,9 @@ import img from "../../assets/empty.jpg";
 import { serverUrl } from "../../App";
 import { Clipboard, Edit } from "lucide-react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { setCourseData } from "../../redux/courseSlice.js";
 
 import { toast } from "react-toastify";
 
@@ -25,6 +28,8 @@ const EditCourse = () => {
   const [backendImage, setBackendImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
+  const dispatch = useDispatch();
+  const { courseData } = useSelector((state) => state.course);
 
   const handleThumbnail = (e) => {
     const file = e.target.files[0];
@@ -79,9 +84,18 @@ const EditCourse = () => {
     try {
       const response = await fetch(`${serverUrl}/api/courses/editcourse/${courseId}`,
         formData,{withCredentials: true});
-     
-       console.log("Course edited successfully:", response.data);
-       setLoading(false);
+      console.log("Course edited successfully:", response.data);
+      const updateData = response.data;
+      if(updateData.isPublished){
+        const updatedCourses = courseData.map(c => c._id === courseId ? updateData : c);
+       if(!courseData.some(c => c._id === courseId)){
+        updatedCourses.push(updateData);}
+      dispatch(setCourseData(updateData))
+      }else{
+         const filterCourses = courseData.filter(c => c._id !== courseId);
+      dispatch(setCourseData(filterCourses));
+      }
+      setLoading(false);
        navigate("/Courses");
        toast.success("Course edited successfully!");
     } catch (error) {
@@ -96,9 +110,10 @@ const EditCourse = () => {
     try {
       const response = await axios.delete(`${serverUrl}/api/courses/removecourse/${courseId}`, {
         withCredentials: true });
-
-         console.log("Course removed successfully:", response.data);
-       setLoading1(false);
+      console.log("Course removed successfully:", response.data);
+      const filterCourses = courseData.filter(c => c._id !== courseId);
+      dispatch(setCourseData(filterCourses));
+      setLoading1(false);
        navigate("/Courses");
        toast.success("Course removed successfully!");
  } catch (error) {
