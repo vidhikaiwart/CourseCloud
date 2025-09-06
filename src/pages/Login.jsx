@@ -10,7 +10,8 @@ import { serverUrl } from '../App.jsx';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice.js';
-
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {auth , provider } from '../../utills/firebase.js'
 
 const Login = () => {
   
@@ -22,7 +23,8 @@ const Login = () => {
 
     const navigate = useNavigate();
 
-    const handleLogin = async () =>{
+    const handleLogin = async (e) =>{
+      e.preventDefault();
         setLoading(true)
         try{
             const result = await axios.post(`${serverUrl}/api/auth/login`,
@@ -38,7 +40,30 @@ const Login = () => {
                 toast.error(error.response.data.message || "Login failed");
         }
 
-    }
+    };
+
+      const googleLogin = async () => {  
+ 
+        try {
+          const response = await signInWithPopup(auth, provider);
+          let user = response.user;
+          let name = user.displayName;
+          let email = user.email;
+          let role = "";
+     
+          const result = await axios.post(
+            `${serverUrl}/api/auth/googleauth`,
+            { name, email, role },
+            { withCredentials: true }
+          );
+          dispatch(setUserData(result.data));
+          navigate("/");
+          toast.success("Google Login successful");
+        } catch (error) {
+          console.log(error);
+        }
+      }; // ✅ closed properly
+
 
   
     return (
@@ -94,9 +119,10 @@ const Login = () => {
             </div>
   
             {/* Google button */}
-            <button className="w-full border border-gray-400 py-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-100 transition">
+            <button className="w-full border border-gray-400 py-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+           >
               <img src={google} alt="Google" className="w-5 h-5" />
-              <span className="text-[16px] text-gray-800">Sign up with Google</span>
+              <span className="text-[16px] text-gray-800" onClick={googleLogin}>Sign up with Google</span>
             </button>
   
             <p className="text-sm text-gray-500">

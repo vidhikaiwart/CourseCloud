@@ -8,13 +8,16 @@ import { serverUrl } from '../App.jsx';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux';
- 
-import { setUserData } from "../redux/userSlice.js";
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {auth , provider } from '../../utills/firebase.js'
 
+
+
+
+import { setUserData } from "../redux/userSlice.js";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-  
   const navigate = useNavigate();
   const [name,setName] = useState("");
   const [email,setEmail] = useState("");
@@ -23,26 +26,49 @@ const SignUp = () => {
   const [loading,setLoading] = useState(false);
   const dispatch = useDispatch();
 
-const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
     setLoading(true);
-    try{
-  const result = await axios.post(`${serverUrl}/api/auth/signup`, 
-    { name, email,password,role},
-    { withCredentials: true })
-    dispatch(setUserData(result.data));
-    console.log(result.data);
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/auth/signup`,
+        { name, email, password, role },
+        { withCredentials: true }
+      );
+      dispatch(setUserData(result.data));
+      console.log(result.data);
 
-     setLoading(false);
-     navigate("/")
-     toast.success("Signup successful");
-    
-    }catch(error){
-     console.log(error)
       setLoading(false);
-     toast.error(error.response.data.message || "Signup failed");
+      navigate("/");
+      toast.success("Signup successful");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error(error.response?.data?.message || "Signup failed");
     }
+  };
 
-}
+  const googleSignUp = async () => {  
+    const provider = new GoogleAuthProvider();
+    try {
+      const response = await signInWithPopup(auth, provider);
+      let user = response.user;
+      let name = user.displayName;
+      let email = user.email;
+ 
+      const result = await axios.post(
+        `${serverUrl}/api/auth/googleauth`,
+        { name, email, role },
+        { withCredentials: true }
+      );
+      dispatch(setUserData(result.data));
+      navigate("/");
+      toast.success("Google Signup successful");
+    } catch (error) {
+      console.log(error);
+    }
+  }; // ✅ closed properly
 
   return (
     <div className="bg-[#dddbdb] w-[100vw] min-h-[100vh] flex items-center justify-center">
@@ -59,14 +85,16 @@ const handleSignUp = async () => {
             type="text"
             placeholder="Full Name"
             className="w-full px-4 py-2 border rounded-md outline-none"
-            onChange={(e)=>setName(e.target.value) } value={name}
-       />
+            onChange={(e)=>setName(e.target.value)}
+            value={name}
+          />
           <input
             type="email"
             placeholder="Your Email"
             className="w-full px-4 py-2 border rounded-md outline-none"
-            onChange={(e)=>setEmail(e.target.value)} value={email}
-       />
+            onChange={(e)=>setEmail(e.target.value)}
+            value={email}
+          />
 
           {/* Password with toggle */}
           <div className="w-full relative">
@@ -74,7 +102,8 @@ const handleSignUp = async () => {
               type={showPassword ? "text" : "password"}
               placeholder="Your password"
               className="w-full px-4 py-2 border rounded-md outline-none"
-              onChange={(e)=>setPassword(e.target.value)} value={password}
+              onChange={(e)=>setPassword(e.target.value)}
+              value={password}
             />
             <span
               className="absolute right-3 top-2.5 text-gray-500 cursor-pointer"
@@ -98,9 +127,11 @@ const handleSignUp = async () => {
             ))}
           </div>
 
-          <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition "
-          onClick={handleSignUp}
-          disabled={loading}>
+          <button
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+            onClick={handleSignUp}
+            disabled={loading}
+          >
             {loading ? <ClipLoader color="#ffffff" size={30} /> : "Sign Up" }
           </button>
 
@@ -112,14 +143,21 @@ const handleSignUp = async () => {
           </div>
 
           {/* Google button */}
-          <button className="w-full border border-gray-400 py-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-100 transition">
+          <button
+            className="w-full border border-gray-400 py-2 rounded-md flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+            onClick={googleSignUp}
+          >
             <img src={google} alt="Google" className="w-5 h-5" />
             <span className="text-[16px] text-gray-800">Sign up with Google</span>
           </button>
 
           <p className="text-sm text-gray-500">
             Already have an account?{" "}
-            <a href="/login"  className="text-black font-medium" onClick={() => navigate('/login')}>
+            <a
+              href="/login"
+              className="text-black font-medium"
+              onClick={() => navigate('/login')}
+            >
               Login
             </a>
           </p>
